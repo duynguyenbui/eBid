@@ -1,0 +1,94 @@
+@model SignUpViewModel
+
+<div class="login-page">
+    <div class="container">
+        <div class="row top-buffer">
+            <div class="col"></div>
+            <div class="col-10">
+                <form asp-route="SignUp" method="post">
+                    <div class="login-container">
+                        <h2>Sign Up</h2>
+                        <partial name="_ValidationSummary"/>
+                        <div class="row">
+                            <!-- Left Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Username"></label>
+                                    <input class="form-control" placeholder="Username" asp-for="Username" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Email"></label>
+                                    <input type="email" class="form-control" placeholder="Email" asp-for="Email">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password"></label>
+                                    <input type="password" class="form-control" placeholder="Password" asp-for="Password" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CardNumber"></label>
+                                    <input class="form-control" placeholder="Card Number" asp-for="CardNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="SecurityNumber"></label>
+                                    <input class="form-control" placeholder="Security Number" asp-for="SecurityNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Expiration"></label>
+                                    <input class="form-control" placeholder="MM/YY" asp-for="Expiration">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CardHolderName"></label>
+                                    <input class="form-control" placeholder="Card Holder Name" asp-for="CardHolderName">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="CardType"></label>
+                                    <input class="form-control" placeholder="Card Type" asp-for="CardType">
+                                </div>
+                            </div>
+
+                            <!-- Right Column -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Street"></label>
+                                    <input class="form-control" placeholder="Street" asp-for="Street">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="City"></label>
+                                    <input class="form-control" placeholder="City" asp-for="City">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="State"></label>
+                                    <input class="form-control" placeholder="State" asp-for="State">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="PhoneNumber"></label>
+                                    <input class="form-control" placeholder="Phone Number" asp-for="PhoneNumber">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Country"></label>
+                                    <input class="form-control" placeholder="Country" asp-for="Country">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="ZipCode"></label>
+                                    <input class="form-control" placeholder="Zip Code" asp-for="ZipCode">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Name"></label>
+                                    <input class="form-control" placeholder="First Name" asp-for="Name">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="LastName"></label>
+                                    <input class="form-control" placeholder="Last Name" asp-for="LastName">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary" name="button" value="signup">Sign Up</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</div>

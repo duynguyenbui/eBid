@@ -1,0 +1,8 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Test and Build before every commit
+
+dotnet test
+
+dotnet build 

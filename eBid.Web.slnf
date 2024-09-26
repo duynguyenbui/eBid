@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "eBid.sln",
+    "projects": [
+      "src\\Auction.API\\Auction.API.csproj",
+      "src\\eBid.AppHost\\eBid.AppHost.csproj",
+      "src\\eBid.ServiceDefaults\\eBid.ServiceDefaults.csproj",
+      "src\\EventBus\\EventBus.csproj",
+      "src\\EventBusRabbitMQ\\EventBusRabbitMQ.csproj",
+      "src\\IntegrationEventLogEF\\IntegrationEventLogEF.csproj"
+    ]
+  }
+}

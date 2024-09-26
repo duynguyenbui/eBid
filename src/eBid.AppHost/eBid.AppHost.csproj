@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>E8C294FD-1189-43D3-B279-B3E519322DA7</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Elastic.Clients.Elasticsearch" />
+        <PackageReference Include="Aspire.Hosting.Elasticsearch" />
+        <PackageReference Include="Aspire.Hosting.NodeJs" />
+        <!--        <PackageReference Include="Aspire.Hosting.NodeJs" />-->
+        <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+        <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+        <PackageReference Include="Aspire.Hosting.Redis" />
+        <PackageReference Include="Aspire.Hosting.AppHost" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Auction.API\Auction.API.csproj" />
+        <ProjectReference Include="..\BFF\BFF.csproj" />
+        <ProjectReference Include="..\Bidding.API\Bidding.API.csproj" />
+        <ProjectReference Include="..\BiddingProcessor\BiddingProcessor.csproj" />
+        <ProjectReference Include="..\Identity.API\Identity.API.csproj" />
+        <ProjectReference Include="..\PaymentProcessor\PaymentProcessor.csproj" />
+        <ProjectReference Include="..\Search.API\Search.API.csproj" />
+    </ItemGroup>
+</Project>

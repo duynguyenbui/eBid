@@ -1,0 +1,31 @@
+﻿services:
+  postgres:
+    image: debezium/postgres:15-alpine
+    build: ./docker/postgres
+    hostname: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/postgres/postgresql.conf.sample:/usr/share/postgresql/postgresql.conf.sample
+      - ./postgres_init.sql:/docker-entrypoint-initdb.d/postgres_init.sql
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c 'max_connections=500'
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+  identity:
+    image: quay.io/keycloak/keycloak:21.0.2
+    command: [ 'start-dev --import-realm' ]
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_PROXY: passthrough
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: admin
+      KC_DB_PASSWORD: admin
+      KC_HTTP_PORT: 8080
+    ports:
+      - 8080:8080
+volumes:
+  postgres_data:

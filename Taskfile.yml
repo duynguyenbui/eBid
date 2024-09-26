@@ -1,0 +1,7 @@
+version: '3'
+
+tasks:
+  aspire-dev:
+    cmds:
+      - dotnet run --project ./src/bidify.AppHost/bidify.AppHost.csproj
+    silent: true

@@ -1,0 +1,45 @@
+### Request to create a new auction
+POST http://localhost:5001/api/auction/items?api-version=1.0
+Content-Type: application/json
+
+{
+  "name": "Vintage Guitar",
+  "description": "A rare 1960s electric guitar with original parts and case, in great playing condition.",
+  "startingPrice": 1000,
+  "endingTime": "2024-08-27T10:00:00.000Z",
+  "auctionTypeId": 2
+}
+
+### Request to update an existing auction
+PUT http://localhost:5001/api/auction/items?api-version=1.0
+Content-Type: application/json
+
+{
+  "Id": 9,
+  "name": "Vintage Guitar Updated",
+  "description": "A rare 1960s electric guitar with original parts and case, in great playing condition.",
+  "startingPrice": 2000,
+  "endingTime": "2024-08-27T10:00:00.000Z",
+  "auctionTypeId": 2
+}
+
+
+### Request to catalog service
+GET http://localhost:5001/api/auction/all?api-version=1.0
+Content-Type: application/json
+
+### Request to bidding service
+GET http://localhost:5002
+Content-Type: application/json
+
+### Request to payment service
+GET http://localhost:5003
+Content-Type: application/json
+
+### Request to search service
+GET http://localhost:5004
+Content-Type: application/json
+
+### Request to bff service
+GET http://localhost:5555
+Content-Type: application/json

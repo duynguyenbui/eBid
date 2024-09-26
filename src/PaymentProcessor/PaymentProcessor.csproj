@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <RootNamespace>eBid.PaymentProcessor</RootNamespace>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\eBid.ServiceDefaults\eBid.ServiceDefaults.csproj" />
+      <ProjectReference Include="..\EventBusRabbitMQ\EventBusRabbitMQ.csproj" />
+      <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    </ItemGroup>
+
+</Project>

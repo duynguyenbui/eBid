@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>eBid.IntegrationEventLogEF</RootNamespace>
+        <Nullable>enable</Nullable>
+        <IsPublishable>false</IsPublishable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\EventBus\EventBus.csproj" />
+    </ItemGroup>
+
+</Project>
