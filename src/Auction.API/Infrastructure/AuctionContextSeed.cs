@@ -18,7 +18,28 @@ public partial class AuctionContextSeed(
         context.Database.OpenConnection();
         ((NpgsqlConnection)context.Database.GetDbConnection()).ReloadTypes();
 
-        if (!context.AuctionItems.Any())
+        var auctionTypes = new[]
+        {
+            new AuctionType { Type = "English" }, new AuctionType { Type = "Dutch" },
+            new AuctionType { Type = "Sealed-bid" }, new AuctionType { Type = "Vickrey" },
+            new AuctionType { Type = "Reverse" }, new AuctionType { Type = "Double" },
+            new AuctionType { Type = "Combinatorial" }, new AuctionType { Type = "Buyout" },
+            new AuctionType { Type = "Japanese" }, new AuctionType { Type = "Multi-unit" },
+            new AuctionType { Type = "Online" }, new AuctionType { Type = "Silent" },
+            new AuctionType { Type = "Yankee" }, new AuctionType { Type = "All-pay" },
+            new AuctionType { Type = "Penny" }, new AuctionType { Type = "Reserve price" },
+            new AuctionType { Type = "Bid" }, new AuctionType { Type = "Lowest unique bid" },
+            new AuctionType { Type = "Other" }
+        };
+
+        if (!context.AuctionTypes.Any())
+        {
+            await context.AuctionTypes.AddRangeAsync(auctionTypes);
+            await context.SaveChangesAsync();
+            logger.LogInformation($"Seeded {auctionTypes.Length} of auctions types");
+        }
+
+        if (!context.AuctionItems.Any() && false)
         {
             var sourcePath = Path.Combine(contentRootPath, "Setup", "auctions.json");
             var sourceJson = File.ReadAllText(sourcePath);
@@ -33,6 +54,7 @@ public partial class AuctionContextSeed(
             await context.SaveChangesAsync();
 
             logger.LogInformation("Seeded auctions with {NumTypes} types", context.AuctionTypes.Count());
+
 
             var typeIdsByName = await context.AuctionTypes.ToDictionaryAsync(x => x.Type, x => x.Id);
 

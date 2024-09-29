@@ -29,6 +29,10 @@ global using System.Diagnostics;
 global using CloudinaryDotNet;
 global using CloudinaryDotNet.Actions;
 
+global using eBid.Auction.API.Services.AI;
+global using eBid.Auction.API.Services.Identity;
+global using eBid.Auction.API.Services.Image;
+
 global using Npgsql;
 
 global using OpenAI;

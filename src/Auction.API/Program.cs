@@ -15,7 +15,5 @@ app.MapDefaultEndpoints();
 app.NewVersionedApi("Auction")
     .MapAuctionApiV1();
 
-app.MapGet("/identity/users", (HttpContext context) => context.User.GetUserId()).RequireAuthorization();
-
 app.UseDefaultOpenApi();
 app.Run();

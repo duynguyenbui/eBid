@@ -4,6 +4,13 @@ public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
+        builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policyBuilder =>
+        {
+            policyBuilder.AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin();
+        }));
+
         builder.AddRedisClient("redis");
 
         builder.AddElasticsearchClient("elasticsearch");

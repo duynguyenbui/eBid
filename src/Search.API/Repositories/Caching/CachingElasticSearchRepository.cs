@@ -57,8 +57,18 @@ public class CachingElasticSearchRepository(
         return await repository.GetItemsByStatus(index, status, from, size);
     }
 
-    public async Task<List<object>> GetTypes(string index, int from, int size)
+    public async Task<List<(int, string)>> GetTypes(string index, int from, int size)
     {
         return await repository.GetTypes(index, from, size);
+    }
+
+    public async Task<bool> GetItemIsOnSell(string index, int id)
+    {
+        return await repository.GetItemIsOnSell(index, id);
+    }
+
+    public async Task<List<AuctionItemData>> GetItemsBySub(string index, string sub, int from, int size)
+    {
+        return await repository.GetItemsBySub(index, sub, from, size);
     }
 }

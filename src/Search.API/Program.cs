@@ -11,6 +11,8 @@ builder.AddDefaultOpenApi(withApiVersioning);
 
 var app = builder.Build();
 
+app.UseCors("CorsPolicy");
+
 app.MapDefaultEndpoints();
 
 app.NewVersionedApi("Search")

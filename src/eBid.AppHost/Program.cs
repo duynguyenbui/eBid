@@ -90,12 +90,13 @@ identityApi.WithEnvironment("AuctionApiClient",
         auctionApi.GetEndpoint("http")
         // "http://auction-api:5001"
     )
-    .WithEnvironment("WebAppClient", identityEndpoint);
+    .WithEnvironment("WebAppClient", "http://localhost:3000");
 
 // Just implement in development mode for now 
-builder.AddNpmApp("webapp", "../webapp")
-    .WithHttpEndpoint(env: "PORT")
-    .WithExternalHttpEndpoints()
-    .PublishAsDockerFile();
+// builder.AddNpmApp("webapp", "../webapp")
+//     .WithEnvironment("NEXT_PUBLIC_SEARCH_URL", searchApi.GetEndpoint("http"))
+//     .WithHttpEndpoint(env: "PORT")
+//     .WithExternalHttpEndpoints()
+//     .PublishAsDockerFile();
 
 builder.Build().Run();

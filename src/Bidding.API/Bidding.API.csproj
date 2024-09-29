@@ -35,4 +35,8 @@
         <ProjectReference Include="..\IntegrationEventLogEF\IntegrationEventLogEF.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="IntegrationEvents\EventHandling\" />
+    </ItemGroup>
+
 </Project>

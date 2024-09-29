@@ -36,6 +36,30 @@
                     RedirectUris = { $"{configuration["AuctionApiClient"]}/swagger/oauth2-redirect.html" },
                     PostLogoutRedirectUris = { $"{configuration["AuctionApiClient"]}/swagger/" },
                     AllowedScopes = { "auction" }
+                },
+                new()
+                {
+                    ClientId = "webapp",
+                    ClientName = "WebApp Client",
+                    ClientSecrets = new List<Secret> { new("secret".Sha256()) },
+                    AllowedGrantTypes = GrantTypes.CodeAndClientCredentials,
+                    RequireConsent = false,
+                    AllowOfflineAccess = true,
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    IncludeJwtId = false,
+                    RequirePkce = false,
+                    RedirectUris = new List<string> { $"{configuration["WebAppClient"]}/api/auth/callback/idserver" },
+                    PostLogoutRedirectUris =
+                        new List<string> { $"{configuration["WebAppClient"]}/signout-callback-oidc" },
+                    AllowedScopes = new List<string>
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.OfflineAccess,
+                        "auction"
+                    },
+                    AccessTokenLifetime = 60 * 60 * 2, // 2 hours
+                    IdentityTokenLifetime = 60 * 60 * 2 // 2 hours
                 }
             };
         }

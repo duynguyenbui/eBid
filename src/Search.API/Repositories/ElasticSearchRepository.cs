@@ -1,3 +1,5 @@
+using System.Data;
+
 using Elastic.Clients.Elasticsearch.QueryDsl;
 
 namespace eBid.Search.API.Repositories;
@@ -114,17 +116,73 @@ public class ElasticSearchRepository(ElasticsearchClient client)
         return [];
     }
 
-    public async Task<List<object>> GetTypes(string index, int from, int size)
+    public async Task<List<(int, string)>> GetTypes(string index, int from, int size)
     {
+        var hasIndex = await client.Indices.ExistsAsync(index);
+
+        if (!hasIndex.Exists)
+        {
+            return [];
+        }
+
         var response = await client.SearchAsync<AuctionItemData>(s => s
             .Index(index)
             .From(from)
             .Size(size)
         );
 
-        List<object> result =
-            [response.Documents.Select(data => new { data.AuctionTypeId, data.AuctionType }).ToList()];
+        var result = response.Documents
+            .Select(data => (data.AuctionTypeId, data.AuctionType))
+            .Distinct()
+            .ToList();
 
         return result;
+    }
+
+    public async Task<bool> GetItemIsOnSell(string index, int id)
+    {
+        if (!(await client.Indices.ExistsAsync(index)).Exists)
+        {
+            throw new DataException("Index not found");
+        }
+
+        var response = await client.SearchAsync<AuctionItemData>(s => s
+            .Index(index)
+            .Query(q => q
+                .Match(m => m
+                    .Field(data => data.Id)
+                    .Query(id)
+                )
+            )
+        );
+
+        if (response.IsValidResponse)
+        {
+            return response.Documents.FirstOrDefault()?.OnSell ?? false;
+        }
+
+        throw new DataException("Item not found");
+    }
+
+    public async Task<List<AuctionItemData>> GetItemsBySub(string index, string sub, int from, int size)
+    {
+        var hasIndex = await client.Indices.ExistsAsync(index);
+
+        if (!hasIndex.Exists)
+        {
+            return [];
+        }
+
+        var response = await client.SearchAsync<AuctionItemData>(s =>
+            s.Index(index).From(from).Size(size)
+                .Query(q => q
+                    .Match(m => m
+                        .Field(data => data.SellerId)
+                        .Query(sub)
+                    )
+                )
+        );
+
+        return response.IsValidResponse ? response.Documents.ToList() : [];
     }
 }

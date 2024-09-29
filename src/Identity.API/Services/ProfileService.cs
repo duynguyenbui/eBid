@@ -11,7 +11,7 @@
 
         public async Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
-            var subject = context.Subject ?? throw new ArgumentNullException(nameof(context.Subject));
+            var subject = context.Subject;
 
             var subjectId = subject.Claims.Where(x => x.Type == "sub").FirstOrDefault()?.Value;
 

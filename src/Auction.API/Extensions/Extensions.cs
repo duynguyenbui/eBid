@@ -29,9 +29,11 @@ public static class Extensions
 
         builder.Services.AddMigration<AuctionContext, AuctionContextSeed>();
 
+        builder.Services.AddHttpContextAccessor();
         // Add the integration services that consume the DbContext
         builder.Services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<AuctionContext>>();
         builder.Services.AddTransient<IAuctionIntegrationEventService, AuctionIntegrationEventService>();
+        builder.Services.AddTransient<IIdentityService, IdentityService>();
 
         builder.AddRabbitMqEventBus("eventbus");
 

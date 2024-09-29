@@ -8,5 +8,7 @@ public interface IElasticSearchRepository<TEntity>
     Task<List<TEntity>> GetItemsByTypeId(string index, int typeId, int from, int size);
     Task<List<TEntity>> GetItemsByIds(string index, int[] ids, int from, int size);
     Task<List<TEntity>> GetItemsByStatus(string index, string status, int from, int size);
-    Task<List<object>> GetTypes(string index, int from, int size);
+    Task<List<(int, string)>> GetTypes(string index, int from, int size);
+    Task<bool> GetItemIsOnSell(string index, int id);
+    Task<List<TEntity>> GetItemsBySub(string index, string sub, int from, int size);
 }

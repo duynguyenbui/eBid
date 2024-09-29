@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 namespace eBid.Auction.API;
 
 public static class AuctionApi
@@ -20,7 +22,7 @@ public static class AuctionApi
             async (AuctionContext context, [FromQuery] AuctionStatus status) =>
             await context.AuctionItems.Where(x => x.Status == status).ToListAsync());
         api.MapGet("/auctiontypes",
-            async (AuctionContext context) => await context.AuctionTypes.OrderBy(x => x.Type).ToListAsync());
+            async (AuctionContext context) => await context.AuctionTypes.OrderBy(x => x.Id).ToListAsync());
 
         // Route for using resolving auction items using AI 
         api.MapGet("/items/withsemanticrelevance/{text:minlength(1)}", GetItemsBySemanticRelevance)
@@ -148,13 +150,23 @@ public static class AuctionApi
             return TypedResults.NotFound($"Item with id {productToUpdate.Id} not found.");
 
         if (!auctionItem.IsAllowedToUpdate())
-            return TypedResults.NotFound("Item is not allowed to be updated due to some of the reasons");
+            return TypedResults.NotFound("Item is not allowed to be updated due to some restrictions.");
 
+        var sellerId = auctionItem.SellerId ?? string.Empty;
+
+        if (sellerId != services.IdentityService.GetUserIdentity())
+            return TypedResults.NotFound("You are not the owner of this item.");
+        
         var auctionEntry = services.Context.Entry(auctionItem);
         auctionEntry.CurrentValues.SetValues(productToUpdate);
 
         auctionItem.UpdatedAt = DateTime.UtcNow;
-        auctionItem.Embedding = await services.AuctionAI.GetEmbeddingAsync(auctionItem);
+
+        if (services.AuctionAI.IsEnabled)
+        {
+            auctionItem.Embedding = await services.AuctionAI.GetEmbeddingAsync(auctionItem)
+                                    ?? throw new Exception("Failed to generate embedding.");
+        }
 
         await services.Context.SaveChangesAsync();
 
@@ -167,10 +179,11 @@ public static class AuctionApi
         return TypedResults.Created($"/api/auction/items/{productToUpdate.Id}");
     }
 
+
     private static async Task<Results<Created, BadRequest>> CreateType([AsParameters] AuctionServices services,
-        string auctionType)
+        [FromBody] AuctionTypeCreatedDataTransferObject auctionType)
     {
-        var existedType = await services.Context.AuctionTypes.Where(at => at.Type == auctionType)
+        var existedType = await services.Context.AuctionTypes.Where(at => at.Type == auctionType.Type)
             .FirstOrDefaultAsync();
 
         if (existedType is not null)
@@ -178,10 +191,10 @@ public static class AuctionApi
             return TypedResults.BadRequest();
         }
 
-        await services.Context.AuctionTypes.AddAsync(new AuctionType() { Type = auctionType });
+        var eType = await services.Context.AuctionTypes.AddAsync(new AuctionType() { Type = auctionType.Type });
         await services.Context.SaveChangesAsync();
 
-        return TypedResults.Created("/api/auction/auctiontypes/");
+        return TypedResults.Created($"/api/auction/auctiontypes/{eType.Entity.Id}");
     }
 
     private static async Task<Results<NoContent, NotFound>> DeleteItemById(
@@ -224,7 +237,7 @@ public static class AuctionApi
             Description = data.Description,
             Name = data.Name,
             OnSell = false,
-            SellerId = Guid.NewGuid().ToString(),
+            SellerId = services.IdentityService.GetUserIdentity(),
             StartingPrice = data.StartingPrice,
             EndingTime = data.EndingTime,
         };

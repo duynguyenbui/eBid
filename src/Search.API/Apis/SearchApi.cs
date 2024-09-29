@@ -9,14 +9,41 @@ public static class SearchApi
         var api = app.MapGroup("api/search").HasApiVersion(1.0);
 
         api.MapGet("/items/all", GetAllItems);
+        // api.MapGet("/items/by/user", GetItemsBySellerId);
         api.MapGet("/items/by/id/{id:int}", GetItemById);
         api.MapGet("/items/by/ids", GetItemByIds);
         api.MapGet("/items/type/{typeId}", GetItemsByTypeId);
         api.MapGet("/items/by/auctionstatus", GetItemsByAuctionStatus);
         api.MapGet("/items/by/name/{term:minlength(1)}", GetItemsByName);
         api.MapGet("/by/auctiontypes", GetAuctionTypes);
+        api.MapGet("/by/id/{id:int}/onsell", GetItemIsOnSell);
+        api.MapGet("/by/sub/{sub:minlength(1)}", GetItemBySub);
 
         return app;
+    }
+
+    private static async Task<Ok<PaginatedItems<AuctionItemData>>> GetItemBySub([AsParameters] SearchServices services,
+        [AsParameters] PaginationRequest request, string sub)
+    {
+        var from = request.From;
+        var size = request.Size;
+        var result = await services.EsRepository.GetItemsBySub(Index, sub, from, size);
+
+        return TypedResults.Ok(new PaginatedItems<AuctionItemData>(from, size, result.Count, result));
+    }
+
+    private static async Task<Results<NotFound<string>, Ok<bool>>> GetItemIsOnSell(
+        [AsParameters] SearchServices services, int id)
+    {
+        try
+        {
+            var itemIsOnSell = await services.EsRepository.GetItemIsOnSell(Index, id);
+            return TypedResults.Ok(itemIsOnSell);
+        }
+        catch (Exception e)
+        {
+            return TypedResults.NotFound("Item not found");
+        }
     }
 
     private static async Task<Ok<PaginatedItems<AuctionItemData>>> GetItemByIds(
@@ -57,7 +84,7 @@ public static class SearchApi
         return TypedResults.Ok(result);
     }
 
-    private static async Task<IResult> GetAuctionTypes([AsParameters] SearchServices services,
+    private static async Task<Ok<List<(int, string)>>> GetAuctionTypes([AsParameters] SearchServices services,
         [AsParameters] PaginationRequest request)
     {
         var result = await services.EsRepository.GetTypes(Index, request.From, request.Size);

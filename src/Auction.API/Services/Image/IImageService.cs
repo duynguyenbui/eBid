@@ -1,4 +1,4 @@
-namespace eBid.Auction.API.Services;
+namespace eBid.Auction.API.Services.Image;
 
 public interface IImageService<TUploadResult, TDeleteResult>
 {

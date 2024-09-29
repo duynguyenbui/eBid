@@ -1,4 +1,4 @@
-namespace eBid.Auction.API.Services;
+namespace eBid.Auction.API.Services.AI;
 
 public sealed class AuctionAI : IAuctionAI
 {

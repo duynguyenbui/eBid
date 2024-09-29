@@ -4,6 +4,14 @@ builder.AddServiceDefaults();
 
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policyBuilder =>
+{
+    policyBuilder.AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowAnyOrigin();
+}));
+
+
 builder.AddNpgsqlDbContext<ApplicationDbContext>("identitydb");
 
 // Apply database migration automatically. Note that this approach is not
@@ -36,12 +44,18 @@ builder.Services.AddIdentityServer(options =>
 // TODO: Not recommended for production - you need to store your key material somewhere secure
     .AddDeveloperSigningCredential();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.Lax;
+});
+
 builder.Services.AddTransient<IProfileService, ProfileService>();
 builder.Services.AddTransient<ILoginService<ApplicationUser>, EFLoginService>();
 builder.Services.AddTransient<ISignUpService<ApplicationUser>, EFSignUpService>();
 builder.Services.AddTransient<IRedirectService, RedirectService>();
 
 var app = builder.Build();
+app.UseCors("CorsPolicy");
 
 app.MapDefaultEndpoints();
 
