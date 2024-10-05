@@ -36,6 +36,16 @@ export interface AuctionType {
   type: string;
 }
 
+export interface Bid {
+  id: number;
+  bidder: string;
+  bidTime: string;
+  amount: number;
+  status: string;
+  auctionItemId: number;
+  auctionItem: any;
+}
+
 /* ===============================ZOD OBJECTS=================================== */
 export const LoginSchema = z.object({
   email: z.string().email({
@@ -95,4 +105,11 @@ export const UpdateAuctionSchema = z.object({
 
 export const AuctionTypeSchema = z.object({
   type: z.string().min(2).max(50),
+});
+
+export const UploadFormSchema = z.object({
+  id: z.string(),
+  image: z
+    .instanceof(File)
+    .refine((file) => file.size !== 0, 'Please upload an image'),
 });

@@ -12,18 +12,7 @@ public class CachingElasticSearchRepository(
 
     public async Task<AuctionItemData> GetItemById(string index, int id)
     {
-        var cache = await redisService.GetItemAsync(id);
-
-        if (cache != null)
-        {
-            Console.WriteLine($"Item found in cache with /auction/{id}");
-            return cache;
-        }
-
-        var item = await repository.GetItemById(index, id);
-        if (item != null) await redisService.UpdateItemAsync(item);
-
-        return item;
+        return await repository.GetItemById(index, id);
     }
 
     public async Task<List<AuctionItemData>> GetItemsByName(string index, string term, int from, int size)
@@ -38,17 +27,6 @@ public class CachingElasticSearchRepository(
 
     public async Task<List<AuctionItemData>> GetItemsByIds(string index, int[] ids, int from, int size)
     {
-        var cache = await redisService.GetItemsAsync(ids);
-
-        if (cache != null)
-        {
-            Console.WriteLine($"Items found in cache with /auctions/ids");
-            return cache.ToList();
-        }
-
-        var items = await repository.GetItemsByIds(index, ids, from, size);
-        await redisService.UpdateItemsAsync(items);
-
         return await repository.GetItemsByIds(index, ids, from, size);
     }
 

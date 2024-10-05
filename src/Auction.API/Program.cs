@@ -14,6 +14,7 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 app.NewVersionedApi("Auction")
     .MapAuctionApiV1();
+app.MapGrpcService<GrpcAuctionApi>();
 
 app.UseDefaultOpenApi();
 app.Run();

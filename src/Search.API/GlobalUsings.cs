@@ -4,6 +4,7 @@ global using System.Text.Json.Serialization;
 global using eBid.EventBus.Abstractions;
 global using eBid.EventBus.Events;
 global using eBid.Search.API;
+global using eBid.Search.API.Constants;
 global using eBid.Search.API.Extensions;
 global using eBid.Search.API.IntegrationEvents.EventHandling;
 global using eBid.Search.API.IntegrationEvents.Events;

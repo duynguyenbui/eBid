@@ -3,13 +3,17 @@ namespace eBid.Bidding.Infrastructure;
 /// <remarks>
 /// Add migrations using the following command inside the 'Bidding.Infrastructure' project directory:
 ///
-/// dotnet ef migrations add --startup-project Bidding.API --context BiddingContext [migration-name]
+/// dotnet ef migrations add --startup-project ../Bidding.API/ --context BiddingContext [migration-name]
 /// </remarks>
 public class BiddingContext : DbContext, IUnitOfWork
 {
     public DbSet<PaymentMethod> Payments { get; set; }
     public DbSet<Buyer> Buyers { get; set; }
     public DbSet<CardType> CardTypes { get; set; }
+
+    public DbSet<Bid> Bids { get; set; }
+    
+    public DbSet<AuctionItem> AuctionItems { get; set; }
 
     private readonly IMediator _mediator;
     private IDbContextTransaction _currentTransaction;
@@ -33,6 +37,9 @@ public class BiddingContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfiguration(new PaymentMethodEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new CardTypeEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new BuyerEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new BidEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new AuctionItemEntityTypeConfiguration());
+        
         modelBuilder.UseIntegrationEventLogs();
     }
 

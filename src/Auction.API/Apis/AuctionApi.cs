@@ -55,6 +55,12 @@ public static class AuctionApi
         if (!item.IsAllowedToUpdate())
             return TypedResults.BadRequest("Item is not allowed to be updated due to some of the reasons");
 
+        if (item.SellerId != services.IdentityService.GetUserIdentity())
+            return TypedResults.BadRequest("You are not the owner of this item.");
+
+        if (item.PicturePublicId != null)
+            await services.ImageService.DeleteImageAsync(item.PicturePublicId);
+
         var result = await services.ImageService.AddImageAsync(image);
 
         if (result.Error != null) return TypedResults.BadRequest(result.Error.Message);
@@ -86,6 +92,11 @@ public static class AuctionApi
         if (item.OnSell)
         {
             return TypedResults.BadRequest("Item is already on sell");
+        }
+
+        if (item.PictureUrl == null || item.PicturePublicId == null)
+        {
+            return TypedResults.BadRequest("Item does not have an image");
         }
 
         // Make sure that it is idempotent so we don't end up in a loop
@@ -156,7 +167,7 @@ public static class AuctionApi
 
         if (sellerId != services.IdentityService.GetUserIdentity())
             return TypedResults.NotFound("You are not the owner of this item.");
-        
+
         var auctionEntry = services.Context.Entry(auctionItem);
         auctionEntry.CurrentValues.SetValues(productToUpdate);
 
@@ -197,7 +208,7 @@ public static class AuctionApi
         return TypedResults.Created($"/api/auction/auctiontypes/{eType.Entity.Id}");
     }
 
-    private static async Task<Results<NoContent, NotFound>> DeleteItemById(
+    private static async Task<Results<NoContent, NotFound, BadRequest<string>>> DeleteItemById(
         [AsParameters] AuctionServices services,
         int id)
     {
@@ -206,6 +217,11 @@ public static class AuctionApi
         if (item is null)
         {
             return TypedResults.NotFound();
+        }
+
+        if (item.OnSell)
+        {
+            return TypedResults.BadRequest("Item is on sell, cannot be deleted.");
         }
 
         services.Context.AuctionItems.Remove(item);
@@ -241,6 +257,12 @@ public static class AuctionApi
             StartingPrice = data.StartingPrice,
             EndingTime = data.EndingTime,
         };
+
+        if (services.AuctionAI.IsEnabled)
+        {
+            item.Embedding = await services.AuctionAI.GetEmbeddingAsync(item)
+                             ?? throw new Exception("Failed to generate embedding.");
+        }
 
         var entry = services.Context.Add(item);
         await services.Context.SaveChangesAsync();

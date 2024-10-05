@@ -5,15 +5,14 @@ import Image from 'next/image';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Clock, DollarSign, Info } from 'lucide-react';
+import { Clock, DollarSign } from 'lucide-react';
 import BidForm from '@/components/bid-form';
 import { Auction } from '@/types';
 import { getAuctionById } from '@/actions/get';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
-export default function Component({ params }: { params: { id: string } }) {
+export default function UpdatePage({ params }: { params: { id: string } }) {
   const session = useSession();
   const [auction, setAuction] = useState<Auction | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -37,25 +36,31 @@ export default function Component({ params }: { params: { id: string } }) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto">
       <Card className="overflow-hidden">
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid lg:grid-cols-2">
           <div className="relative aspect-square">
             <Image
               fill
-              src={`/products/${params.id}.webp`}
+              src={auction?.pictureUrl || '/placeholder.webp'}
               alt={auction?.name || 'Product Image'}
-              className="object-cover"
+              className="object-cover -mb-2"
             />
           </div>
-          <CardContent className="p-6 flex flex-col justify-between">
-            <div className="space-y-4">
+          <CardContent className="p-3 flex flex-col justify-between">
+            <div className="space-y-4 pt-5 pl-5 pr-5">
               <div className="flex justify-between items-start">
                 <div className="flex space-x-1">
                   <div>
-                    <h1 className="text-3xl font-bold">{auction?.name}</h1>
-                    <Badge variant="secondary" className="text-sm">
+                    <h1 className="text-3xl font-bold mb-2">{auction?.name}</h1>
+                    <Badge variant="outline" className="text-sm">
                       {auction?.auctionType}
+                    </Badge>
+                    <Badge
+                      variant="default"
+                      className="text-sm ml-2 bg-green-500"
+                    >
+                      {auction?.status}
                     </Badge>
                   </div>
                   <div className="mt-1">
@@ -90,39 +95,12 @@ export default function Component({ params }: { params: { id: string } }) {
               </div>
             </div>
             <Separator className="my-6" />
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Place Your Bid</h2>
-              <BidForm />
-            </div>
+            <BidForm
+              auctionId={auction?.id.toString()!}
+            />
           </CardContent>
         </div>
       </Card>
     </div>
   );
-}
-{
-  /* <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Auction Details</h2>
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid gap-4">
-              <div className="flex items-center space-x-2">
-                <Info className="w-5 h-5 text-blue-500" />
-                <span className="font-semibold">Condition:</span>
-                <span>New</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Info className="w-5 h-5 text-blue-500" />
-                <span className="font-semibold">Shipping:</span>
-                <span>Free Shipping</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Info className="w-5 h-5 text-blue-500" />
-                <span className="font-semibold">Returns:</span>
-                <span>30 Day Returns</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */
 }

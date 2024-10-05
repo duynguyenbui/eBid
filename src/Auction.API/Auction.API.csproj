@@ -28,6 +28,7 @@
         <PackageReference Include="Pgvector" />
         <PackageReference Include="Pgvector.EntityFrameworkCore" />
         <PackageReference Include="OpenAI-DotNet" />
+        <PackageReference Include="Grpc.AspNetCore" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,6 +40,10 @@
 
     <ItemGroup>
         <Content Include="Pics\*.webp" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="protos/auctions.proto" GrpcServices="Server" />
     </ItemGroup>
 
 </Project>

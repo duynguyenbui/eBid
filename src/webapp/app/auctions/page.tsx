@@ -7,14 +7,14 @@ const AuctionsPage = () => {
   return (
     <div className="w-full min-w-full">
       {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-start items-center mb-6">
         <h1 className="text-3xl font-bold">Featured Auctions</h1>
-        <Link
+        {/* <Link
           href="/history"
           className="text-xl text-gray-600 hover:text-gray-900"
         >
           <FaHistory className="text-blue-600 w-6 h-6" />
-        </Link>
+        </Link> */}
       </div>
 
       {/* Auction Listings */}

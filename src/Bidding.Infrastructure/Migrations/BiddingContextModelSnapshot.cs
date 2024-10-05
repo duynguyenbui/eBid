@@ -28,6 +28,66 @@ namespace eBid.Bidding.Infrastructure.Migrations
             modelBuilder.HasSequence("paymentseq")
                 .IncrementsBy(10);
 
+            modelBuilder.Entity("eBid.Bidding.Domain.AggregatesModel.BiddingAggregate.AuctionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AuctionEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Finished")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Seller")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<decimal>("StartingPrice")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("auctionitems", (string)null);
+                });
+
+            modelBuilder.Entity("eBid.Bidding.Domain.AggregatesModel.BiddingAggregate.Bid", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("AuctionItemId")
+                        .HasMaxLength(200)
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("BidTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Bidder")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuctionItemId");
+
+                    b.ToTable("bids", (string)null);
+                });
+
             modelBuilder.Entity("eBid.Bidding.Domain.AggregatesModel.BuyerAggregate.Buyer", b =>
                 {
                     b.Property<int>("Id")
@@ -162,6 +222,17 @@ namespace eBid.Bidding.Infrastructure.Migrations
                     b.HasKey("EventId");
 
                     b.ToTable("IntegrationEventLog", (string)null);
+                });
+
+            modelBuilder.Entity("eBid.Bidding.Domain.AggregatesModel.BiddingAggregate.Bid", b =>
+                {
+                    b.HasOne("eBid.Bidding.Domain.AggregatesModel.BiddingAggregate.AuctionItem", "AuctionItem")
+                        .WithMany()
+                        .HasForeignKey("AuctionItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AuctionItem");
                 });
 
             modelBuilder.Entity("eBid.Bidding.Domain.AggregatesModel.BuyerAggregate.PaymentMethod", b =>

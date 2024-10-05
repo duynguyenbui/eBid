@@ -71,9 +71,17 @@
         <PackageVersion Include="Pgvector" Version="0.3.0"/>
         <PackageVersion Include="OpenAI-DotNet" Version="8.2.1"/>
         <PackageVersion Include="CloudinaryDotNet" Version="1.26.2"/>
-        <PackageVersion Include="MediatR" Version="12.4.0"/>
+        <PackageVersion Include="MediatR" Version="12.4.1" />
         <PackageVersion Include="System.Reflection.TypeExtensions" Version="4.7.0"/>
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.3.0"/>
         <PackageVersion Include="Yarp.ReverseProxy" Version="2.1.0" />
+        <!-- Grpc -->
+        <PackageVersion Include="Grpc.AspNetCore" Version="2.55.0" />
+        <PackageVersion Include="Google.Protobuf" Version="3.23.4" />
+        <PackageVersion Include="Grpc.Net.Client" Version="2.55.0" />
+        <PackageVersion Include="Grpc.Tools" Version="2.56.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageVersion>
     </ItemGroup>
 </Project>

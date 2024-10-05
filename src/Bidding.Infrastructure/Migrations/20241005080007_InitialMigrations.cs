@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace eBid.Bidding.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +19,22 @@ namespace eBid.Bidding.Infrastructure.Migrations
             migrationBuilder.CreateSequence(
                 name: "paymentseq",
                 incrementBy: 10);
+
+            migrationBuilder.CreateTable(
+                name: "auctionitems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AuctionEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Seller = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    StartingPrice = table.Column<decimal>(type: "numeric", nullable: false),
+                    Finished = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_auctionitems", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "buyers",
@@ -75,6 +92,29 @@ namespace eBid.Bidding.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "bids",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Bidder = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    BidTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    AuctionItemId = table.Column<int>(type: "integer", maxLength: 200, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_bids", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_bids_auctionitems_AuctionItemId",
+                        column: x => x.AuctionItemId,
+                        principalTable: "auctionitems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "paymentmethods",
                 columns: table => new
                 {
@@ -104,6 +144,11 @@ namespace eBid.Bidding.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_bids_AuctionItemId",
+                table: "bids",
+                column: "AuctionItemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_buyers_IdentityGuid",
                 table: "buyers",
                 column: "IdentityGuid",
@@ -124,6 +169,9 @@ namespace eBid.Bidding.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "bids");
+
+            migrationBuilder.DropTable(
                 name: "IntegrationEventLog");
 
             migrationBuilder.DropTable(
@@ -131,6 +179,9 @@ namespace eBid.Bidding.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "requests");
+
+            migrationBuilder.DropTable(
+                name: "auctionitems");
 
             migrationBuilder.DropTable(
                 name: "buyers");

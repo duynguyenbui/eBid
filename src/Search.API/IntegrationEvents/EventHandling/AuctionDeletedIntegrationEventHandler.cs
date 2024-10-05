@@ -8,7 +8,7 @@ public class AuctionDeletedIntegrationEventHandler(
     public async Task Handle(AuctionDeletedIntegrationEvent @event)
     {
         var response = await client.DeleteAsync<object>(@event.AuctionId, d => d
-            .Index("auctions")
+            .Index(ElasticSearchConstants.AuctionsElasticSearchConstants)
         );
 
         if (response.IsValidResponse)

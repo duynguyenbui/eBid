@@ -3,11 +3,29 @@
 import {
   Auction,
   AuctionType,
+  Bid,
   PaginationItems,
   PaginationRequest,
 } from '@/types';
 import axios from 'axios';
 import { getUser } from './user';
+
+export const getBids = async (auctionId: string): Promise<Bid[]> => {
+  const res = await axios
+    .get<Bid[]>(
+      `${process.env.BIDDING_API_URL}/api/bidding/bids/all/by/${auctionId}?api-version=${process.env.BIDDING_API_URL_VERSION}`
+    )
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.error(err);
+
+      return [];
+    });
+
+  return res;
+};
 
 export const getAuctions = async (request: PaginationRequest) => {
   const { from, size } = request;

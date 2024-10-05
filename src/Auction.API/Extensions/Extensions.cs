@@ -57,6 +57,7 @@ public static class Extensions
 
         builder.Services.AddSingleton<IAuctionAI, AuctionAI>();
 
+        builder.Services.AddGrpc();
         // Specifically register the image service for cloudinary
         builder.Services.AddScoped<IImageService<ImageUploadResult, DeletionResult>, ImageService>();
     }

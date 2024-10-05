@@ -36,10 +36,12 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { ImageUploader } from '@/components/image-upload';
+import { deleteItem } from '@/actions/delete';
+import { useRouter } from 'next/navigation';
 
 const DEFAULT_VALUE = {
   datetime: undefined,
@@ -47,9 +49,9 @@ const DEFAULT_VALUE = {
 
 export default function UpdatePage({ params }: { params: { id: string } }) {
   const { id } = params;
-
+  const router = useRouter();
   const [auction, setAuction] = useState<Auction | null>(null);
-  const [isOnSell, setIsOnSell] = useState(false);
+  const [isOnSell, setIsOnSell] = useState<boolean>();
   const [auctionTypes, setAuctionTypes] = useState<AuctionType[]>([]);
 
   const form = useForm<z.infer<typeof UpdateAuctionSchema>>({
@@ -101,7 +103,7 @@ export default function UpdatePage({ params }: { params: { id: string } }) {
           });
 
           if (res.onSell) {
-            setIsOnSell(true);
+            setIsOnSell(res.onSell);
           }
         }
       })

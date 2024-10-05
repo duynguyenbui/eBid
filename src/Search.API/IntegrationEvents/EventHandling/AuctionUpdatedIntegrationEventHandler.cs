@@ -7,7 +7,8 @@ public class AuctionUpdatedIntegrationEventHandler(
     public async Task Handle(AuctionUpdatedIntegrationEvent @event)
     {
         logger.LogInformation("Handling integration event: {event}", @event);
-        var response = await client.UpdateAsync<AuctionItemData, AuctionItemData>("auctions", @event.ItemData.Id,
+        var response = await client.UpdateAsync<AuctionItemData, AuctionItemData>(
+            ElasticSearchConstants.AuctionsElasticSearchConstants, @event.ItemData.Id,
             descriptor =>
             {
                 descriptor.Doc(@event.ItemData);

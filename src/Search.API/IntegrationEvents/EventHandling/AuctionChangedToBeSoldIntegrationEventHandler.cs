@@ -9,7 +9,7 @@ public class AuctionChangedToBeSoldIntegrationEventHandler(
     {
         logger.LogInformation("Handling integration event: {event}", @event);
 
-        var response = await client.UpdateAsync<AuctionItemData, AuctionItemDataToChangedToSell>("auctions",
+        var response = await client.UpdateAsync<AuctionItemData, AuctionItemDataToChangedToSell>(ElasticSearchConstants.AuctionsElasticSearchConstants,
             @event.AuctionItemId,
             descriptor =>
             {

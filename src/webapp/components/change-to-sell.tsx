@@ -52,6 +52,7 @@ export const ChangeToSell = ({ auctionId }: { auctionId: string }) => {
       });
     } finally {
       router.refresh();
+      setTimeout(() => {}, 1000);
       router.push(`/auctions/${auctionId}`);
     }
   };

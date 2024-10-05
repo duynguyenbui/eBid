@@ -19,13 +19,6 @@ internal static class Extensions
         services.AddTransient<IIntegrationEventLogService, IntegrationEventLogService<BiddingContext>>();
 
         services.AddTransient<IBiddingIntegrationEventService, BiddingIntegrationEventService>();
-
-        builder.AddRabbitMqEventBus("eventbus")
-            .AddEventBusSubscriptions();
-
-        services.AddHttpContextAccessor();
-
-        services.AddTransient<IIdentityService, IdentityService>();
         
         // Configure mediatR
         services.AddMediatR(cfg =>
@@ -36,7 +29,19 @@ internal static class Extensions
             cfg.AddOpenBehavior(typeof(ValidatorBehavior<,>));
             cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));
         });
+        
+        builder.AddRabbitMqEventBus("eventbus")
+            .AddEventBusSubscriptions();
 
+        services.AddHttpContextAccessor();
+        services.AddTransient<IIdentityService, IdentityService>();
+
+        services.AddSingleton<IValidator<CreateBiddingCommand>, CreateBiddingCommandValidator>();
+        services.AddSingleton<IValidator<IdentifiedCommand<CreateBiddingCommand, bool>>, IdentifiedCommandValidator>();
+
+        services.AddScoped<GrpcClient>();
+        services.AddScoped<IBiddingRepository, BiddingRepository>();
+        services.AddScoped<IPaymentQueries, PaymentQueries>();
         services.AddScoped<IRequestManager, RequestManager>();
     }
 

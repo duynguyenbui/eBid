@@ -3,6 +3,7 @@
 global using System.ComponentModel.DataAnnotations;
 global using System.Data;
 
+global using eBid.Bidding.Domain.AggregatesModel.BiddingAggregate;
 global using eBid.Bidding.Domain.AggregatesModel.BuyerAggregate;
 global using eBid.Bidding.Domain.Exceptions;
 global using eBid.Bidding.Domain.SeedWork;

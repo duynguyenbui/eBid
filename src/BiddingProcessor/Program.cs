@@ -1,6 +1,10 @@
-var builder = Host.CreateApplicationBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
+builder.AddBasicServiceDefaults();
 builder.AddApplicationServices();
 
-var host = builder.Build();
-host.Run();
+var app = builder.Build();
+
+app.MapDefaultEndpoints();
+
+await app.RunAsync();

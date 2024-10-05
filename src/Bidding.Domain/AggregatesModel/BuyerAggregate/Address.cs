@@ -1,4 +1,4 @@
-namespace eBid.Bidding.Domain.AggregatesModel.BiddingAggregate;
+namespace eBid.Bidding.Domain.AggregatesModel.BuyerAggregate;
 
 public class Address : ValueObject
 {

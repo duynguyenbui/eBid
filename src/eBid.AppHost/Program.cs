@@ -1,7 +1,5 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// var isDevelopment = builder.Environment.IsDevelopment();
-
 // Infrastructure
 var redis = builder.AddRedis("redis");
 
@@ -52,17 +50,22 @@ var searchApi = builder.AddProject<Projects.Search_API>("search-api")
 
 // Other projects (uncomment and configure as needed)
 builder.AddProject<Projects.BiddingProcessor>("bidding-processor")
-    .WithReference(biddingDb);
+    .WithReference(biddingDb)
+    .WithReference(rabbitMq);
 
 var biddingApi = builder.AddProject<Projects.Bidding_API>("bidding-api")
     .WithReference(biddingDb)
-    .WithReference(rabbitMq);
+    .WithReference(rabbitMq)
+    .WithEnvironment("Identity__Url",
+        // "http://identity-api:5000"
+        identityEndpoint
+    );
 
 // var paymentProcessor = builder.AddProject<Projects.PaymentProcessor>("payment-processor");
 // var bff = builder.AddProject<Projects.BFF>("bff");
 
 // Configuration for OpenAI
-bool useOpenAI = false;
+const bool useOpenAI = true;
 if (useOpenAI)
 {
     var openAI = builder.Configuration.GetSection("OpenAIOptions");
@@ -85,12 +88,19 @@ auctionApi.WithEnvironment("CloudinaryOptions__CloudName", builder.Configuration
     .WithEnvironment("CloudinaryOptions__ApiKey", builder.Configuration["CloudinaryOptions:ApiKey"])
     .WithEnvironment("CloudinaryOptions__ApiSecret", builder.Configuration["CloudinaryOptions:ApiSecret"]);
 
+biddingApi.WithEnvironment("GrpcServer", auctionApi.GetEndpoint("http2"));
+
 // Setup identity API to communicate with auction API
 identityApi.WithEnvironment("AuctionApiClient",
         auctionApi.GetEndpoint("http")
         // "http://auction-api:5001"
     )
+    .WithEnvironment("BiddingApiClient",
+        biddingApi.GetEndpoint("http")
+        // "http://bidding-api:5002"
+    )
     .WithEnvironment("WebAppClient", "http://localhost:3000");
+
 
 // Just implement in development mode for now 
 // builder.AddNpmApp("webapp", "../webapp")

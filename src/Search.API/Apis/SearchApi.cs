@@ -2,7 +2,7 @@ namespace eBid.Search.API;
 
 public static class SearchApi
 {
-    private const string Index = "auctions";
+    private const string Index = ElasticSearchConstants.AuctionsElasticSearchConstants;
 
     public static IEndpointRouteBuilder MapSearchApiV1(this IEndpointRouteBuilder app)
     {
@@ -111,7 +111,7 @@ public static class SearchApi
         [AsParameters] PaginationRequest request)
     {
         var response = await services.EsRepository
-            .GetAllItems("auctions", request.From, request.Size);
+            .GetAllItems(ElasticSearchConstants.AuctionsElasticSearchConstants, request.From, request.Size);
 
         return TypedResults.Ok(
             new PaginatedItems<AuctionItemData>(request.From, request.Size, response.Count, response));

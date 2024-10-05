@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,27 +16,25 @@ import {
 } from './ui/form';
 import { ImagePlus } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import { getAuctionIsOnSell } from '@/actions/get';
+import { getAuctionById } from '@/actions/get';
+import { Button } from './ui/button';
+import { uploadImage } from '@/actions/post';
+import { Auction, UploadFormSchema } from '@/types';
 
 interface ImageUploaderProps {
   auctionId: string;
 }
 
 export const ImageUploader: React.FC<ImageUploaderProps> = ({ auctionId }) => {
-  const [onSell, setOnSell] = React.useState(false);
+  const [auction, setAuction] = React.useState<Auction | null>(null);
   const [preview, setPreview] = React.useState<string | ArrayBuffer | null>('');
 
-  const formSchema = z.object({
-    image: z
-      .instanceof(File)
-      .refine((file) => file.size !== 0, 'Please upload an image'),
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof UploadFormSchema>>({
+    resolver: zodResolver(UploadFormSchema),
     mode: 'onBlur',
     defaultValues: {
       image: new File([''], 'filename'),
+      id: auctionId,
     },
   });
 
@@ -61,20 +60,39 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ auctionId }) => {
       maxFiles: 1,
       maxSize: 1000000,
       accept: { 'image/png': [], 'image/jpg': [], 'image/jpeg': [] },
-      disabled: onSell, // Disable dropzone when onSell is true
+      disabled: auction?.onSell,
     });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
-    toast({
-      variant: 'default',
-      title: `Image uploaded successfully 🎉 ${values.image.name}`,
-    });
+  const onSubmit = async (values: z.infer<typeof UploadFormSchema>) => {
+    try {
+      const formData = new FormData();
+      formData.append('image', values.image);
+
+      const response = await uploadImage(values.id, formData);
+
+      if (response?.error) {
+        toast({
+          title: 'Failed to upload image',
+          description: response.error,
+        });
+        return;
+      }
+
+      toast({
+        title: 'Upload image successfully',
+        description: 'Image has been uploaded',
+      });
+    } catch (error) {
+      toast({
+        title: 'Failed to upload image',
+        description: 'Something went wrong',
+      });
+    }
   };
 
   useEffect(() => {
-    getAuctionIsOnSell(auctionId).then((res) => {
-      setOnSell(res);
+    getAuctionById(auctionId).then((res) => {
+      setAuction(res);
     });
   }, [auctionId]);
 
@@ -82,7 +100,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ auctionId }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-2 mt-5 text-start"
+        className="space-y-2 mt-5 flex flex-col items-center"
       >
         <FormField
           control={form.control}
@@ -107,24 +125,42 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ auctionId }) => {
                 <div
                   {...getRootProps()}
                   className={`mx-auto flex cursor-pointer flex-col items-center justify-center gap-y-2 rounded-lg border border-foreground p-8 shadow-sm shadow-foreground ${
-                    onSell ? 'cursor-not-allowed opacity-50' : ''
+                    auction?.onSell ? 'cursor-not-allowed opacity-50' : ''
                   }`}
                 >
-                  {preview && (
+                  {preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={preview as string}
                       alt="Uploaded image"
                       className="max-h-[400px] rounded-lg"
                     />
+                  ) : (
+                    auction?.pictureUrl && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={auction.pictureUrl}
+                        alt="Auction image"
+                        className="max-h-[400px] rounded-lg"
+                      />
+                    )
                   )}
                   <ImagePlus
-                    className={`size-30 ${preview ? 'hidden' : 'block'}`}
+                    className={`size-30 ${
+                      preview || auction?.pictureUrl ? 'hidden' : 'block'
+                    }`}
                   />
-                  <Input {...getInputProps()} type="file" disabled={onSell} />
+                  <Input
+                    {...getInputProps()}
+                    type="file"
+                    disabled={auction?.onSell}
+                  />
                   {isDragActive ? (
                     <p>Drop the image!</p>
                   ) : (
-                    <p>Click here or drag an image to upload it</p>
+                    form.getValues('image') === null && (
+                      <p>Click here or drag an image to upload it</p>
+                    )
                   )}
                 </div>
               </FormControl>
@@ -138,6 +174,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({ auctionId }) => {
             </FormItem>
           )}
         />
+        <Button
+          type="submit"
+          disabled={
+            auction?.onSell ||
+            form.getValues('image') === null ||
+            form.formState.isSubmitting
+          }
+        >
+          Upload
+        </Button>
       </form>
     </Form>
   );

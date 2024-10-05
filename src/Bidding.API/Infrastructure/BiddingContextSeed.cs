@@ -1,3 +1,5 @@
+using CardType = eBid.Bidding.Domain.AggregatesModel.BuyerAggregate.CardType;
+
 namespace eBid.Bidding.API.Infrastructure;
 
 public class BiddingContextSeed : IDbSeeder<BiddingContext>

@@ -8,7 +8,8 @@ public class AuctionCreatedIntegrationEventHandler(
     public async Task Handle(AuctionCreatedIntegrationEvent @event)
     {
         logger.LogInformation("Handling integration event: {event}", @event);
-        var idxResponse = await client.IndexAsync(@event.ItemData, req => req.Index("auctions"));
+        var idxResponse = await client.IndexAsync(@event.ItemData,
+            req => req.Index(ElasticSearchConstants.AuctionsElasticSearchConstants));
 
         if (!idxResponse.IsValidResponse)
         {

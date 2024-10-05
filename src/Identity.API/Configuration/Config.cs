@@ -12,7 +12,7 @@
         //The effect is the same as that of API resources in IdentityServer 3.x
         public static IEnumerable<ApiScope> GetApiScopes()
         {
-            return new List<ApiScope> { new("auction", "Auction Service"), new("bidding", "Bidding Service"), };
+            return new List<ApiScope> { new("auction", "Auction Service"), new("bidding", "Bidding Service") };
         }
 
         // Identity resources are data like user ID, name, or email address of a user
@@ -39,6 +39,16 @@
                 },
                 new()
                 {
+                    ClientId = "biddingswaggerui",
+                    ClientName = "Bidding Swagger UI",
+                    AllowedGrantTypes = GrantTypes.Implicit,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = { $"{configuration["BiddingApiClient"]}/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { $"{configuration["BiddingApiClient"]}/swagger/" },
+                    AllowedScopes = { "bidding" }
+                },
+                new()
+                {
                     ClientId = "webapp",
                     ClientName = "WebApp Client",
                     ClientSecrets = new List<Secret> { new("secret".Sha256()) },
@@ -56,10 +66,11 @@
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.OfflineAccess,
-                        "auction"
+                        "auction",
+                        "bidding"
                     },
                     AccessTokenLifetime = 60 * 60 * 2, // 2 hours
-                    IdentityTokenLifetime = 60 * 60 * 2 // 2 hours
+                    IdentityTokenLifetime = 60 * 60 * 2, // 2 hours
                 }
             };
         }

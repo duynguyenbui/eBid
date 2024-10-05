@@ -33,7 +33,7 @@ export const Hero = () => {
               {session.status === 'unauthenticated' ? (
                 <Button
                   variant="secondary"
-                  className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-500"
+                  className="w-full sm:w-auto bg-gradient-to-r from-cyan-500 to-blue-500 text-white"
                   onClick={() => SignIn()}
                 >
                   Login

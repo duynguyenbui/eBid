@@ -9,7 +9,7 @@ public class AuctionImageUpdatedIntegrationEventHandler(
     {
         logger.LogInformation("Handling integration event: {event}", @event);
 
-        var response = await client.UpdateAsync<AuctionItemData, AuctionItemDataWithPictureUrl>("auctions",
+        var response = await client.UpdateAsync<AuctionItemData, AuctionItemDataWithPictureUrl>(ElasticSearchConstants.AuctionsElasticSearchConstants,
             @event.AuctionId,
             descriptor =>
             {
